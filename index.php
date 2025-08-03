@@ -6,57 +6,7 @@ if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-if (isset($_GET['add_to_cart'])) {
-    $product_id = $_GET['add_to_cart'];
-    
 
-    if (isset($_SESSION['cart'][$product_id])) {
-        $_SESSION['cart'][$product_id]['quantity'] += 1;
-    } else {
-
-        $sql = "SELECT id, name, price FROM products WHERE id = ?";
-        $stmt = $db->prepare($sql);
-        $stmt->bind_param("i", $product_id);
-        $stmt->execute();
-        $product = $stmt->get_result()->fetch_assoc();
-        
-        if ($product) {
-            $_SESSION['cart'][$product_id] = [
-                'id' => $product['id'],
-                'name' => $product['name'],
-                'price' => $product['price'],
-                'quantity' => 1
-            ];
-        }
-    }
-    
-    header('Location: '.$_SERVER['PHP_SELF']);
-    exit;
-}
-
-if (isset($_GET['remove_from_cart'])) {
-    $product_id = $_GET['remove_from_cart'];
-    if (isset($_SESSION['cart'][$product_id])) {
-        unset($_SESSION['cart'][$product_id]);
-    }
-    header('Location: '.$_SERVER['PHP_SELF']);
-    exit;
-}
-
-if (isset($_POST['update_quantity'])) {
-    foreach ($_POST['quantity'] as $product_id => $quantity) {
-        if (isset($_SESSION['cart'][$product_id])) {
-            $quantity = (int)$quantity;
-            if ($quantity > 0) {
-                $_SESSION['cart'][$product_id]['quantity'] = $quantity;
-            } else {
-                unset($_SESSION['cart'][$product_id]);
-            }
-        }
-    }
-    header('Location: '.$_SERVER['PHP_SELF']);
-    exit;
-}
 
 if (isset($_GET['category'])) {
     $sql = "SELECT id, name, price FROM `products` WHERE category = ?";
